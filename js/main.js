@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollEffects();
     initContactForm();
     initScrollAnimations();
+    initWhatsAppWidget();
 });
 
 /**
@@ -367,3 +368,34 @@ window.addEventListener('resize', debounce(function() {
         }
     }
 }, 250));
+
+/**
+ * WhatsApp Widget Toggle
+ */
+function initWhatsAppWidget() {
+    const whatsappBtn = document.getElementById('whatsapp-btn');
+    const whatsappChat = document.getElementById('whatsapp-chat');
+    const whatsappClose = document.getElementById('whatsapp-close');
+
+    if (whatsappBtn && whatsappChat) {
+        // Toggle chat on button click
+        whatsappBtn.addEventListener('click', function() {
+            whatsappChat.classList.toggle('active');
+        });
+
+        // Close chat on close button click
+        if (whatsappClose) {
+            whatsappClose.addEventListener('click', function() {
+                whatsappChat.classList.remove('active');
+            });
+        }
+
+        // Close chat when clicking outside
+        document.addEventListener('click', function(e) {
+            const widget = document.getElementById('whatsapp-widget');
+            if (widget && !widget.contains(e.target) && whatsappChat.classList.contains('active')) {
+                whatsappChat.classList.remove('active');
+            }
+        });
+    }
+}
