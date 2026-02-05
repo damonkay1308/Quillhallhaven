@@ -163,18 +163,39 @@ function initContactForm() {
             submitBtn.textContent = 'Sending...';
             submitBtn.disabled = true;
 
-            // Simulate form submission (replace with actual API call)
-            setTimeout(function() {
-                // Success message
-                showNotification('Thank you for your message! We will get back to you soon.', 'success');
-
-                // Reset form
-                form.reset();
-
+            // Submit to Formspree via AJAX
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(function(response) {
+                if (response.ok) {
+                    // Success message
+                    showNotification('Thank you for your message! We will get back to you soon.', 'success');
+                    // Reset form
+                    form.reset();
+                } else {
+                    // Error from Formspree
+                    response.json().then(function(data) {
+                        if (data.errors) {
+                            showNotification('Error: ' + data.errors.map(e => e.message).join(', '), 'error');
+                        } else {
+                            showNotification('There was a problem sending your message. Please try again.', 'error');
+                        }
+                    });
+                }
+            })
+            .catch(function(error) {
+                showNotification('There was a problem sending your message. Please try again or call us directly.', 'error');
+            })
+            .finally(function() {
                 // Reset button
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
-            }, 1500);
+            });
         });
     }
 }
